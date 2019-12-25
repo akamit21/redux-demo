@@ -6,7 +6,7 @@ This is a repository that I made while learning redux with node.
 
 ## Prerequisites
 
-It is required for you to know a bit of ES6 and ES7 (Object Spread) to correctly understand some of the examples given in this repo. Also be aware that this tutorial targets redux 3.0.2 and react-redux 4.0.0.
+It is required for you to know a bit of ES6 and ES7 (Object Spread) to correctly understand some of the examples given in this repo. Also be aware that this tutorial targets redux 4.0.5.
 
 ## Clone the repository
 
