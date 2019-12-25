@@ -1,5 +1,10 @@
 const redux = require("redux");
+const reduxLogger = require("redux-logger");
+
 const createStore = redux.createStore;
+const combineReduces = redux.combineReducers;
+const applyMiddleware = redux.applyMiddleware;
+const logger = reduxLogger.createLogger();
 // action
 /**
  * the only way application can interact with the store
@@ -10,7 +15,7 @@ const createStore = redux.createStore;
  * the `type` property is typically defined as string constants
  */
 const BUY_CAKE = "BUY_CAKE";
-
+const BUY_COOKIE = "BUY_COOKIE";
 // action is an object having `type` property
 /*{
   type: BUY_CAKE,
@@ -27,6 +32,12 @@ const buyCake = () => {
   };
 };
 
+const buyCookie = () => {
+  return {
+    type: BUY_COOKIE
+  };
+};
+
 // reducers
 /**
  * specify how the app's changes in the response to the actions
@@ -35,16 +46,51 @@ const buyCake = () => {
  * and returns the next state of the application
  * (previousState, action) => newState
  */
-const initialState = {
+// const initialState = {
+//   numOfCakes: 10,
+//   numOfCookies: 20
+// };
+const cakeState = {
   numOfCakes: 10
 };
+const cookieState = {
+  numOfCookies: 20
+};
+// const reducer = (state = initialState, action) => {
+//   switch (action.type) {
+//     case BUY_CAKE:
+//       return {
+//         ...state,
+//         numOfCakes: state.numOfCakes - 1
+//       };
+//     case BUY_COOKIES:
+//       return {
+//         ...state,
+//         numOfCookies: state.numOfCookies - 1
+//       };
+//     default:
+//       return state;
+//   }
+// };
 
-const reducer = (state = initialState, action) => {
+const cakeReducer = (state = cakeState, action) => {
   switch (action.type) {
     case BUY_CAKE:
       return {
         ...state,
         numOfCakes: state.numOfCakes - 1
+      };
+    default:
+      return state;
+  }
+};
+
+const cookieReducer = (state = cookieState, action) => {
+  switch (action.type) {
+    case BUY_COOKIE:
+      return {
+        ...state,
+        numOfCookies: state.numOfCookies - 1
       };
     default:
       return state;
@@ -61,13 +107,28 @@ const reducer = (state = initialState, action) => {
  * subscribe method accepts a function as parameter which is
  * executed any time state in redux store changes
  */
-const store = createStore(reducer);
+const rootReducer = combineReduces({
+  cake: cakeReducer,
+  cookie: cookieReducer
+});
+const store = createStore(rootReducer, applyMiddleware(logger));
 console.log("Initial State: ", store.getState());
-const unsubscribe = store.subscribe(() =>
-  console.log("Updated State: ", store.getState())
-);
+// const unsubscribe = store.subscribe(() =>
+//   console.log("Updated State: ", store.getState())
+// );
+const unsubscribe = store.subscribe(() => {});
 store.dispatch(buyCake());
 store.dispatch(buyCake());
 store.dispatch(buyCake());
+store.dispatch(buyCookie());
+store.dispatch(buyCookie());
 
 unsubscribe();
+
+// middleware
+/**
+ * it is the suggested way to extend redux with custom functionality
+ * provide a third-party extension point between dispatching an action,
+ * and the moment it reaches the reducer
+ * used for logging, crash reporting, performing async tasks ...
+ */
